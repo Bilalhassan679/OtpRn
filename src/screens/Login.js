@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-native'
+import { ActivityIndicator, Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { createUserWithEmailAndPassword , signInWithEmailAndPassword} from 'firebase/auth';
@@ -6,8 +6,10 @@ const Login = () => {
     const [email,setEmail]=useState(null);
     const [password,setPassword]=useState(null);
     const [loading,setLoading]=useState(false);
-    const auth=FIREBASE_AUTH;
+    
+    //FIREBASE Auth START
 
+    const auth=FIREBASE_AUTH;
     const signUp =useCallback(async ()=>{
         setLoading(true)
         try {
@@ -15,13 +17,16 @@ const Login = () => {
             console.log(response,'Responseeee')
         } catch (error) {
             console.log('Sign in Failed',error)
+            Alert.alert('Sign Up in Failed',error)
+
         }
         finally{
             setLoading(false)
-            setPassword(null)
-            setEmail(null)
+       
         }
-    },[]);
+    },[email,password]);
+
+
     const signIn =useCallback(async ()=>{
         setLoading(true)
         try {
@@ -29,17 +34,22 @@ const Login = () => {
             console.log(response,'Responseeee')
         } catch (error) {
             console.log('Sign in Failed',error)
+            Alert.alert('Sign In in Failed',error)
         }
         finally{
             setLoading(false)
-            setPassword(null)
-            setEmail(null)
+          
         }
-    },[]);
+    },[email,password]);
+
+    //FIREBASE Auth END
+
     
   return (
-    <View style={styles.contaner}>
-        <TextInput style={styles.input} placeholder='email' value={email} onChangeText={(e)=>setEmail(e)}/>
+      
+      <ScrollView contentContainerStyle={styles.contaner}>
+        <KeyboardAvoidingView behavior='padding'>
+        <TextInput style={styles.input} placeholder='email' value={email} onChangeText={(e)=>setEmail(e)} />
         <TextInput style={styles.input} secureTextEntry={true} placeholder='password' value={password} onChangeText={(e)=>setPassword(e)}/>
      {loading ? <ActivityIndicator/> : 
      <>
@@ -47,7 +57,9 @@ const Login = () => {
      <Text onPress={signUp} style={styles.login}>create a account</Text>
      </>
       }
-    </View>
+    </KeyboardAvoidingView>
+    </ScrollView>
+
   )
 }
 
@@ -57,7 +69,6 @@ const styles = StyleSheet.create({
     contaner:{
         flex:1,
         justifyContent:'center',
-        
         padding:10
     },
     input:{
@@ -68,8 +79,8 @@ const styles = StyleSheet.create({
         borderWidth:1
     },
     login:{
+        marginBottom:10,
         color:'black',
-        marginBottom:'5',
         textAlign:'center'
     }
 })
